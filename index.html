@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wanz Wangsaff Panel</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Courier New', Courier, monospace;
+      overflow: hidden;
+      background: #000;
+      color: #0f0;
+    }
+
+    .hacker-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+      opacity: 0.2;
+      font-size: 14px;
+      color: lime;
+      animation: scrollText 20s linear infinite;
+      white-space: pre;
+    }
+
+    @keyframes scrollText {
+      0% { transform: translateY(100%); }
+      100% { transform: translateY(-100%); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      color: #00ff88;
+      text-shadow: 0 0 10px #00ff88;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 30px;
+      color: #fff;
+    }
+
+    input[type="tel"], input[type="text"] {
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 20px;
+      outline: none;
+      font-size: 16px;
+      width: 270px;
+      text-align: center;
+    }
+
+    .button {
+      padding: 10px 25px;
+      border: none;
+      margin: 10px 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .lock {
+      background: lime;
+      color: black;
+    }
+
+    .banned {
+      background: red;
+      color: white;
+    }
+
+    .button:hover {
+      transform: scale(1.05);
+    }
+
+    .popup-small, .popup-error {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 999;
+    }
+
+    .popup-small {
+      background: rgba(0, 255, 0, 0.95);
+      color: black;
+    }
+
+    .popup-error {
+      background: rgba(255, 0, 0, 0.9);
+      color: white;
+      z-index: 1000;
+    }
+
+    .popup-small.show, .popup-error.show {
+      opacity: 1;
+    }
+
+    .popup-lockscreen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: linear-gradient(135deg, #000000, #440000);
+      color: white;
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+      animation: flicker 0.1s infinite;
+    }
+
+    .popup-lockscreen h2 {
+      color: red;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .popup-lockscreen input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .popup-lockscreen button {
+      font-size: 14px;
+      padding: 8px 20px;
+      border: none;
+      border-radius: 5px;
+      background: orange;
+      color: black;
+      cursor: pointer;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hacker-bg">
+    <pre>
+access_granted: true
+injecting_payload...
+██╗    ██╗ █████╗ ███╗   ██╗███████╗
+██║    ██║██╔══██╗████╗  ██║██╔════╝
+██║ █╗ ██║███████║██╔██╗ ██║███████╗
+██║███╗██║██╔══██║██║╚██╗██║╚════██║
+╚███╔███╔╝██║  ██║██║ ╚████║███████║
+ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝
+</pre>
+  </div>
+
+  <div class="container">
+    <h1>Wanz Wangsaff</h1>
+    <h2>Masukkan Nomor Target (format: 628xxxxxxxxxx)</h2>
+    <input type="tel" id="phoneNumber" placeholder="628xxxxxxxxxx" />
+    <div>
+      <button class="button lock" onclick="lockTarget()">LOCK</button>
+      <button class="button banned" onclick="bannedTarget()">BANNED</button>
+    </div>
+  </div>
+
+  <div class="popup-small" id="popupLock">✅ Target sukses dikunci!</div>
+  <div class="popup-error" id="popupError">⚠️ Format nomor tidak valid!</div>
+
+  <!-- POPUP SERAM -->
+  <div class="popup-lockscreen" id="popupLockScreen">
+    <h2>🔒 HP kamu telah terkunci!</h2>
+    <p>Masukkan kode untuk membuka</p>
+    <input type="text" placeholder="Masukkan kode..." />
+    <button onclick="bayarKeTarget()">Bayar untuk mendapat kode</button>
+  </div>
+
+  <script>
+    let isLocked = false;
+    let lockedNumber = "";
+    let audioLoop = null;
+    let volumeInterval = null;
+
+    function showError(message) {
+      const popup = document.getElementById("popupError");
+      popup.innerText = "⚠️ " + message;
+      popup.classList.add("show");
+      setTimeout(() => popup.classList.remove("show"), 3000);
+    }
+
+    function lockTarget() {
+      const phone = document.getElementById("phoneNumber").value.trim();
+      if (!/^628\d{8,}$/.test(phone)) {
+        showError("Format nomor tidak valid! Gunakan 628xxxxxxxxxx");
+        return;
+      }
+
+      const popup = document.getElementById('popupLock');
+      popup.classList.add('show');
+      setTimeout(() => popup.classList.remove('show'), 3000);
+
+      isLocked = true;
+      lockedNumber = phone;
+    }
+
+    function bannedTarget() {
+      if (!isLocked || lockedNumber === "") {
+        showError("Kunci target terlebih dahulu sebelum banned!");
+        return;
+      }
+
+      document.getElementById('popupLockScreen').style.display = 'flex';
+
+      if (!audioLoop) {
+        audioLoop = new Audio("https://tmpfiles.org/dl/3439732/1751118729766.aac");
+        audioLoop.loop = true;
+        audioLoop.volume = 0.2;
+
+        audioLoop.play().then(() => {
+          console.log("Audio diputar");
+
+          volumeInterval = setInterval(() => {
+            if (audioLoop.volume < 1.0) {
+              audioLoop.volume = Math.min(audioLoop.volume * 2, 1.0);
+              console.log("Volume naik jadi:", audioLoop.volume);
+            }
+          }, 5000);
+
+        }).catch(e => {
+          console.error("Gagal play audio:", e);
+          showError("Audio gagal diputar. Klik layar dulu!");
+        });
+      }
+    }
+
+    function bayarKeTarget() {
+      if (!lockedNumber) {
+        alert("Nomor belum di-lock bro!");
+        return;
+      }
+
+      const pesan = encodeURIComponent("bang maaf bang");
+      const link = `https://wa.me/${lockedNumber}?text=${pesan}`;
+      window.open(link, "_blank");
+    }
+  </script>
+</body>
+</html>
