@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wanz Wangsaff Panel</title>
+  <link rel="manifest" href="manifest.json" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(() => {
+        console.log('ServiceWorker aktif bro!');
+      });
+    }
+  </script>
   <style>
     * { box-sizing: border-box; }
 
@@ -115,7 +123,6 @@
     .popup-error {
       background: rgba(255, 0, 0, 0.9);
       color: white;
-      z-index: 1000;
     }
 
     .popup-small.show, .popup-error.show {
@@ -196,7 +203,6 @@ injecting_payload...
   <div class="popup-small" id="popupLock">✅ Target sukses dikunci!</div>
   <div class="popup-error" id="popupError">⚠️ Format nomor tidak valid!</div>
 
-  <!-- POPUP SERAM -->
   <div class="popup-lockscreen" id="popupLockScreen">
     <h2>🔒 HP kamu telah terkunci!</h2>
     <p>Masukkan kode untuk membuka</p>
@@ -260,4 +266,5 @@ injecting_payload...
     }
   </script>
 </body>
-</html>
+    </html>
+    
